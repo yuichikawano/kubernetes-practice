@@ -1,0 +1,39 @@
+# Podを定義したマニフェストファイルからは1つのPodしか作成できない。
+# しかし、同一のPodを複数実行する時はReplicaSetを利用する。
+# ReplicaSetは同じ仕様のPodを複数生成・管理するためのリソース。
+# Podの内訳自体、ReplicaSetのyamlに記載
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata: 
+    name: echo
+    labels:
+        app: echo
+spec:
+    # 作成するレプリカ数
+    replicas: 3
+    selector:
+        matchLabels:
+            app: echo
+    # template以下はPodリソースにおける定義と同じ
+    template: 
+        metadata:
+            labels:
+                app: echo
+        spec:
+            containers:
+                # 各コンテナの名前
+            -   name: nginx
+                # DockerHubのイメージ保存先
+                # ローカル環境のイメージの指定もできる
+                image: gihyodocker/nginx-proxy:latest
+                # 環境変数の列挙
+                env:
+                -   name: BACKEND_HOST
+                    value: localhost:8080
+                # コンテナがEXPOSEするポートの指定
+                ports:
+                -   containerPort: 80
+            -   name: echo
+                image: gihyodocker/echo:latest
+                ports:
+                -   containerPort: 8080

@@ -1,0 +1,38 @@
+# Deploymentはアプリケーションデプロイの基本単位となるリソース
+# ReplicaSetは同一仕様Podのレプリカの数を管理制御するためのリソースだったのに対して、
+# DeploymentはReplicaSetを管理操作するために提供されているリソース。
+
+apiVersion: apps/v1
+# deploymentとReplicaSetのマニフェスファイルはさほど違いはない。
+# 違いは、DeploymentがReplicaSetの世代管理を可能にする点。
+kind: Deployment
+metadata:
+    name: echo
+    labels: 
+        app: echo
+spec:
+    replicas: 4
+    selector: 
+        matchLabels:
+            app: echo
+    template:
+        metadata:
+            labels:
+                app: echo
+        spec:
+            containers:
+            -   name: nginx
+                # DockerHubのイメージ保存先
+                # ローカル環境のイメージの指定もできる
+                image: gihyodocker/nginx-proxy:latest
+                # 環境変数の列挙
+                env:
+                -   name: BACKEND_HOST
+                    value: localhost:8080
+                # コンテナがEXPOSEするポートの指定
+                ports:
+                -   containerPort: 80
+            -   name: echo
+                image: gihyodocker/echo:patched
+                ports:
+                -   containerPort: 8080

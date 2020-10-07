@@ -1,0 +1,28 @@
+apiVersion: v1
+# kind は Kubernetes のリソースの種類を指定する属性
+# kind の値次第で spec 配下のスキーマが変わる
+kind: Pod
+# metadata は名前の通りリソースに付与する メタデータで、
+# metadata.name 属性で指定した値がこのリソースの名称として利用されます。
+metadata:
+    name: simple-echo
+# specはリソースを定義するための属性で、
+# Pod の場合は Pod を構成するコンテナ群を containers として定義します。
+spec:
+    containers:
+        # 各コンテナの名前
+    -   name: nginx
+        # DockerHubのイメージ保存先
+        # ローカル環境のイメージの指定もできる
+        image: gihyodocker/nginx-proxy:latest
+        # 環境変数の列挙
+        env:
+        -   name: BACKEND_HOST
+            value: localhost:8080
+        # コンテナがEXPOSEするポートの指定
+        ports:
+        -   containerPort: 80
+    -   name: echo
+        image: gihyodocker/echo:latest
+        ports:
+        -   containerPort: 8080

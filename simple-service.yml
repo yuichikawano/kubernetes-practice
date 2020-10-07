@@ -1,0 +1,13 @@
+# PodのラベルがServiceにセレクタで定義しているラベルと合致した場合
+# 対象のPodはそのServiceのターゲットとなり、Serviceを経由してトラフィックが流れるようになる。
+apiVersion: v1
+kind: Service
+metadata:
+    name: echo
+spec:
+    selector:
+        app: echo
+        release: summer
+    ports:
+        -   name: http
+            port: 80
